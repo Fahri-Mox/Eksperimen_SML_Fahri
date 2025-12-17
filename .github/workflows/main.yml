@@ -1,0 +1,36 @@
+name: Automated Preprocessing
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  preprocess:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12.7
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.7'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Preprocessing Script
+        run: |
+          # Berpindah ke folder preprocessing agar script bisa menemukan path ../dataset_raw/
+          cd preprocessing
+          python automate_Fahri.py
+
+      - name: Upload Processed Dataset as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cleaned-dataset
+          path: preprocessing/dataset_preprocessing/
